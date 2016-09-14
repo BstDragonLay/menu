@@ -2,9 +2,10 @@
 Restaurant Menu
 
 #Pasos para instalacion de la aplicacion
-*Install express-generator
-*cd <carpeta> npm install
+//*Install npm install -g express-generator
+//*cd <carpeta> npm install
+//*Instalar watch npm install -g hotnode
+
 
 // Ejecutar APP
-*DEBUG=restaurant:* npm start
- 
+*hotnode bin/www
