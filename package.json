@@ -1,0 +1,22 @@
+{
+  "name": "menu",
+  "version": "1.0.0",
+  "description": "Menu para restaurantes",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BstDragonLay/menu.git"
+  },
+  "keywords": [
+    "menu"
+  ],
+  "author": "Efrain Lay C",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BstDragonLay/menu/issues"
+  },
+  "homepage": "https://github.com/BstDragonLay/menu#readme"
+}
