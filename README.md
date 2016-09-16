@@ -8,4 +8,9 @@ Restaurant Menu
 
 
 // Ejecutar APP
-*hotnode bin/www
+*Instalacion de Nodemon
+nodemon bin/www
+
+// Instalacion de express-handlebars
+*npm install express-handlebars --save
+/modificaciones en la APP.js(Engine,Views) para handlebars

@@ -4,13 +4,37 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var routes = require('./src/routes/index');
+var users = require('./src/routes/users');
 // Express-Handlebars
 var hbs = require('express-handlebars');
+// Stylus
+var stylus = require('stylus');
 
-var routes = require('./routes/index');
-var users = require('./routes/users');
+
 
 var app = express();
+
+
+
+// Compile stylus to css - Middleware
+
+app.use(
+  stylus.middleware({
+    src: __dirname + '/stylus',
+    dest: __dirname + '/public/css',
+    compile: function(str, path){
+              return 
+              stylus(str)
+              .set('filename', path)
+              .set('compress', true);
+    }
+  })
+  );
+
+
+
+
 // Engine of Handlebars
 app.engine('hbs', hbs({
   extname:'hbs',
