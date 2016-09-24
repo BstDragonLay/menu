@@ -1,11 +1,23 @@
 var express = require('express');
 var router = express.Router();
-// mongo
-var mongo = require('mongodb').MongoClient;
-var objectId = require('mongodb').ObjectID;
-var assert = require('assert');
+// mongoose
+var mongoose = require('mongoose');
+mongoose.connect('localhost:27017/test');
+var Schema = mongoose.Schema;
 
-var url = 'mongodb://localhost:27017/test';
+
+//schema to structur the data files on the module
+var userDataSchema = new Schema({
+	title: {type: String, required: true},
+	content: String,
+	author: String,
+	date: {type: Date, default: Date.now}
+}, {collection: 'UserData'});
+
+//Call the collection or module that are going to catch all the Schema
+
+var UserData = mongoose.model('UserData', userDataSchema);
+
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -15,21 +27,9 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/get-data', function(req, res, next) {
-	var resultArray = [];
-
-	mongo.connect(url, function(err, db) {
-		//error
-		assert.equal(null, err);
-		//well
-		var curso = db.collection('user-data').find();
-		curso.forEach(function(doc, err){
-			assert.equal(null, err);
-			resultArray.push(doc);
-
-		}, function(){
-			db.close();
-			res.render('index', {items: resultArray});
-		});
+	UserData.find()
+	.then(function(doc){
+		res.render('index', {items: doc});
 	});
 });
 
@@ -37,22 +37,13 @@ router.post('/insert', function(req, res, next) {
 	var item = {
 		title: req.body.title,
 		content: req.body.content,
-		author: req.body.author
+		author: req.body.author,
+		date: req.body.date
 	};
 
-	mongo.connect(url, function(err, db){
-		//error
-		assert.equal(null, err);
-		//well
-		db.collection('user-data').insertOne(item, function(err, result) {
-			//error
-			assert.equal(null, err);
-			//well
-			console.log('items inserted');
-			db.close();
-		});
-	});
-
+	var data = new UserData(item);
+	data.save();
+	
 
 	res.redirect('/');
 });
@@ -61,39 +52,30 @@ router.post('/update', function(req, res, next) {
 	var item = {
 		title: req.body.title,
 		content: req.body.content,
-		author: req.body.author
+		author: req.body.author,
+		date: req.body.date
 	};
+
 	var id = req.body.id;
-	mongo.connect(url, function(err, db){
-		//error
-		assert.equal(null, err);
-		//well
-		db.collection('user-data').updateOne({"_id": objectId(id)},{$set: item}, function(err, result) {
-			//error
-			assert.equal(null, err);
-			//well
-			console.log('items update');
-			db.close();
-		});
+
+	UserData.findById(id, function(err, doc){
+		if (err) {
+			console.log('Error en la busqueda de datos');
+		}
+		doc.title = req.body.title;
+		doc.content = req.body.content;
+		doc.author = req.body.author;
+		doc.date = req.body.date;
+		doc.save();
 	});
+	
 	res.redirect('/');
 });
 
 router.post('/delete', function(req, res, next) {
-
 	var id = req.body.id;
-	mongo.connect(url, function(err, db){
-		//error
-		assert.equal(null, err);
-		//well
-		db.collection('user-data').deleteOne({"_id": objectId(id)}, function(err, result) {
-			//error
-			assert.equal(null, err);
-			//well
-			console.log('items deleted');
-			db.close();
-		});
-	});
+	UserData.findByIdAndRemove(id).exec();
+	
 	res.redirect('/');
 });
 module.exports = router;
