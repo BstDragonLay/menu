@@ -1,0 +1,4 @@
+globalsign-domain-verification=D95gKWzM0MfnQ4wrUlomgDHW5-eOwDglKNbSGizkK9
+
+
+firebase=pratice-d5e4d

@@ -1,54 +1,51 @@
 var express = require('express');
 var router = express.Router();
-// mongoose
-var mongoose = require('mongoose');
-mongoose.connect('localhost:27017/test');
-var Schema = mongoose.Schema;
-
-
-//schema to structur the data files on the module
-var userDataSchema = new Schema({
-	title: {type: String, required: true},
-	content: String,
-	author: String,
-	date: {type: Date, default: Date.now}
-}, {collection: 'UserData'});
-
-//Call the collection or module that are going to catch all the Schema
-
-var UserData = mongoose.model('UserData', userDataSchema);
-
+var session = require('express-session');
+var UserRegister = require('./../../models/User').UserRegister;
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { 
-  	title: 'Restaurant Menu APP'
+  	title: 'APP'
   	 });
+  console.log(req.session.user_id);
 });
 
+
 router.get('/get-data', function(req, res, next) {
-	UserData.find()
+	UserRegister.find()
 	.then(function(doc){
 		res.render('index', {items: doc});
 	});
 });
 
-router.post('/insert', function(req, res, next) {
+router.post('/register', function(req, res, next) {
 	var item = {
-		title: req.body.title,
-		content: req.body.content,
-		author: req.body.author,
-		date: req.body.date
+		name: req.body.name,
+		password: req.body.password
 	};
 
-	var data = new UserData(item);
+	var data = new UserRegister(item);
 	data.save();
 	
 
 	res.redirect('/');
 });
 
-router.post('/update', function(req, res, next) {
+router.post('/login', function(req, res){
+	UserRegister.findOne({name:req.body.name, password: req.body.password}, function(err, user){
+		if(err){
+			console.log(String(err));
+
+		}
+		req.session.user_id = user._id;
+		res.redirect('/app');
+	});
+	
+});
+
+
+/*router.post('/update', function(req, res, next) {
 	var item = {
 		title: req.body.title,
 		content: req.body.content,
@@ -72,10 +69,10 @@ router.post('/update', function(req, res, next) {
 	res.redirect('/');
 });
 
-router.post('/delete', function(req, res, next) {
+/*router.post('/delete', function(req, res, next) {
 	var id = req.body.id;
 	UserData.findByIdAndRemove(id).exec();
 	
 	res.redirect('/');
-});
+});*/
 module.exports = router;
